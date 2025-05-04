@@ -1,0 +1,743 @@
+Theme idea:
+--> Pinks
+--> Green
+--> Blue
+
+
+Functionality Ideas:
+--> Add task w/ audio didnt work
+--> Add links worked
+--> Add screenshot didnt worked + deformed the thing
+--> Email when overdue HOW??????
+
+Element Ideas:
+--> Checkbox (clickable)  DONE
+    -> Heart that fills up a LITTLE TOO AMBITIOUS
+--> Progress Bar w/ percentage shown DONE
+--> Changeable themes (Arrows at top to change?) DONE!!!
+--> Mark as complete or change due date DONEE
+
+
+
+//Vers 1// --> No theme change
+import React, { useState } from 'react';
+import './StyleWidget.css';
+
+// Javascript //
+const MyWidget = () => {
+    //hold the created tasks over here
+    const [tasks, setTasks] = useState([
+        { id: 1, text: 'Task 1', isEditing: false },
+        { id: 2, text: 'Task 2', isEditing: false },
+        { id: 3, text: 'Task 3', isEditing: false },
+    ]);
+
+    //hold a new task over here
+    const [newTask, setNewTask] = useState('');
+
+    //create a new task over here --> find way to only create task when box not empty
+    const addTask = () => {
+        if (newTask.trim()) {
+            setTasks([...tasks, { id: Date.now(), text: newTask, isEditing: false }]);
+            setNewTask('');
+        }
+    };
+
+    //delete
+    const deleteTask = (id) => {
+        setTasks(tasks.filter((task) => task.id !== id));
+    };
+
+    const toggleEdit = (id) => {
+        setTasks(
+            tasks.map((task) =>
+                task.id === id ? { ...task, isEditing: !task.isEditing } : task
+            )
+        );
+    };
+
+    const editTask = (id, newText) => {
+        setTasks(
+            tasks.map((task) =>
+                task.id === id ? { ...task, text: newText, isEditing:false} : task
+            )
+        );
+    };
+
+
+// HTML //
+    return (
+        <div className="todo-container">   
+            <h1>To-Do List</h1>
+            <br></br>
+            <div className="todo-input">
+                <input
+                    type="text"
+                    value={newTask}
+                    onChange={(e) => setNewTask(e.target.value)}
+                    placeholder="Add a new task..."
+                />
+                <button onClick={addTask}>Add Task</button>
+            </div>
+            <ul className="todo-list"> 
+                {tasks.map((task) => (
+                    <li key={task.id} className="todo-item">
+                        {task.isEditing ? (
+                            <input
+                                type="text"
+                                defaultValue={task.text}
+                                onBlur={(e) => editTask(task.id, e.target.value)}
+                                autoFocus
+                            />
+                        ) : (
+                            <span>{task.text}</span>
+                        )}
+                        <button onClick={() => toggleEdit(task.id)}>
+                            {task.isEditing ? 'Save' : 'Edit'}
+                        </button>
+                        <button onClick={() => deleteTask(task.id)} className="delete-btn">
+                            Delete
+                        </button>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+};
+
+export default MyWidget;
+
+
+
+//Vers 2// --> Buttons to change colour
+import React, { useState } from 'react';
+import './StyleWidget.css';
+
+// ========================= JavaScript Starts ========================= //
+
+// Main functional component for the To-Do Widget
+const MyWidget = () => {
+    // State to store the list of tasks
+    const [tasks, setTasks] = useState([
+        { id: 1, text: 'Task 1', isEditing: false },
+        { id: 2, text: 'Task 2', isEditing: false },
+    ]);
+
+    // State to store the value of the new task input field
+    const [newTask, setNewTask] = useState('');
+
+    // State to track the selected theme
+    const [theme, setTheme] = useState('pinks');
+
+    // Function to add a new task (only if input is not empty)
+    const addTask = () => {
+        if (newTask.trim()) {
+            setTasks([...tasks, { id: Date.now(), text: newTask, isEditing: false }]);
+            setNewTask(''); // Reset input field after adding task
+        }
+    };
+
+    // Function to delete a task based on its ID
+    const deleteTask = (id) => {
+        setTasks(tasks.filter((task) => task.id !== id));
+    };
+
+    // Function to toggle edit mode for a specific task
+    const toggleEdit = (id) => {
+        setTasks(
+            tasks.map((task) =>
+                task.id === id ? { ...task, isEditing: !task.isEditing } : task
+            )
+        );
+    };
+
+    // Function to save the edited task text
+    const editTask = (id, newText) => {
+        setTasks(
+            tasks.map((task) =>
+                task.id === id ? { ...task, text: newText, isEditing: false } : task
+            )
+        );
+    };
+
+    // Function to change the theme
+    const changeTheme = (newTheme) => {
+        setTheme(newTheme);
+    };
+
+    // ========================= HTML Starts ========================= //
+
+    return (
+        <div className={`todo-container ${theme}`}>
+            {/* Theme selector buttons */}
+            <div className="theme-switcher">
+                <button onClick={() => changeTheme('pinks')}>Pinks</button>
+                <button onClick={() => changeTheme('blues')}>Blues</button>
+                <button onClick={() => changeTheme('greens')}>Greens</button>
+            </div>
+            
+            {/* To-Do List Header */}
+            <h1>To-Do List</h1>
+            
+            {/* Input field for adding new tasks */}
+            <div className="todo-input">
+                <input
+                    type="text"
+                    value={newTask}
+                    onChange={(e) => setNewTask(e.target.value)}
+                    placeholder="Add a new task..."
+                />
+                <button onClick={addTask}>Add Task</button>
+            </div>
+            
+            {/* Displaying the list of tasks */}
+            <ul className="todo-list">
+                {tasks.map((task) => (
+                    <li key={task.id} className="todo-item">
+                        {task.isEditing ? (
+                            // Input field for editing a task
+                            <input
+                                type="text"
+                                defaultValue={task.text}
+                                onBlur={(e) => editTask(task.id, e.target.value)}
+                                autoFocus
+                            />
+                        ) : (
+                            <span>{task.text}</span>
+                        )}
+                        
+                        {/* Edit button toggles edit mode */}
+                        <button onClick={() => toggleEdit(task.id)}>
+                            {task.isEditing ? 'Save' : 'Edit'}
+                        </button>
+                        
+                        {/* Delete button removes the task */}
+                        <button onClick={() => deleteTask(task.id)} className="delete-btn">
+                            Delete
+                        </button>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+};
+
+export default MyWidget;
+
+
+//Version 3//
+import React, { useState } from 'react'; //DONT TOUCH THIS AT ALL 
+
+// Import css file
+import './StyleWidget.css'
+
+// Import images from the assets folder
+import pink_FaceLeft from '../assets/pink_faceLeft.png';
+import pink_FaceRight from '../assets/pink_faceRight.png';
+import blue_FaceLeft from '../assets/blue_faceLeft.png';
+import blue_FaceRight from '../assets/blue_faceRight.png';
+import green_FaceLeft from '../assets/green_faceLeft.png';
+import green_FaceRight from '../assets/green_faceRight.png';
+
+
+////////////////////////////<-----------------JavaScript here----------------->////////////////////////////
+
+const MyWidget = () => {
+    // State to hold tasks, each task has id, text, dueDate, attachment, editing state, and completion status
+    const [tasks, setTasks] = useState([
+        //{ id: 1, text: 'Task 1', dueDate: '2025-03-30', attachment: '', isEditing: false, completed: false },
+    ]);
+    
+    // State for new task input fields (text, dueDate, attachment)
+    const [newTask, setNewTask] = useState('');
+    const [newDueDate, setNewDueDate] = useState('');
+    const [newAttachment, setNewAttachment] = useState('');
+    
+    // State for theme selection (pinks, blues, or greens)
+    const [theme, setTheme] = useState('pinks');
+
+    // Function to format date to 'dd/mm/yyyy'
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
+    // Function to add a new task
+    const addTask = () => {
+        if (newTask.trim() && newDueDate) {
+            setTasks([...tasks, { id: Date.now(), text: newTask, dueDate: newDueDate, attachment: newAttachment, isEditing: false, completed: false }]);
+            setNewTask('');
+            setNewDueDate('');
+            setNewAttachment('');
+        }
+    };
+
+    // Function to delete a task by its id
+    const deleteTask = (id) => {
+        setTasks(tasks.filter((task) => task.id !== id));
+    };
+
+    // Function to toggle edit mode for a task
+    const toggleEdit = (id) => {
+        setTasks(tasks.map((task) => (task.id === id ? { ...task, isEditing: !task.isEditing } : task)));
+    };
+
+    // Function to save task edits
+    const editTask = (id, newText, newDueDate) => {
+        setTasks(tasks.map((task) =>
+            task.id === id ? { ...task, text: newText, dueDate: newDueDate, isEditing: false } : task
+        ));
+    };
+
+    // Function to toggle the completion state of a task
+    const toggleTaskCompletion = (id) => {
+        setTasks(tasks.map((task) =>
+            task.id === id ? { ...task, completed: !task.completed } : task
+        ));
+    };
+
+    // Calculate the percentage of completed tasks for the progress bar
+    const completedTasks = tasks.filter(task => task.completed).length;
+    const progress = tasks.length > 0 ? (completedTasks / tasks.length) * 100 : 0;
+
+    // Function to change the theme of the widget
+    const changeTheme = (newTheme) => {
+        setTheme(newTheme);
+    };
+
+    // Function to render theme switching buttons based on the current theme
+    const getThemeButtons = () => {
+        switch (theme) {
+            case 'pinks':
+                return (
+                    <>
+                        <button onClick={() => changeTheme('blues')}>
+                            <img src={blue_FaceLeft} alt="blue theme" />
+                        </button>
+                        <button onClick={() => changeTheme('greens')}>
+                            <img src={green_FaceRight} alt="green theme" />
+                        </button>
+                    </>
+                );
+            case 'blues':
+                return (
+                    <>
+                        <button onClick={() => changeTheme('pinks')}>
+                            <img src={pink_FaceLeft} alt="pink theme" />
+                        </button>
+                        <button onClick={() => changeTheme('greens')}>
+                            <img src={green_FaceRight} alt="green theme" />
+                        </button>
+                    </>
+                );
+            case 'greens':
+                return (
+                    <>
+                        <button onClick={() => changeTheme('blues')}>
+                            <img src={blue_FaceLeft} alt="blue theme" />
+                        </button>
+                        <button onClick={() => changeTheme('pinks')}>
+                            <img src={pink_FaceRight} alt="pink theme" />
+                        </button>
+                    </>
+                );
+            default:
+                return null;
+        }
+    };
+
+    // Handle changes in the attachment input field
+    const handleAttachmentChange = (e) => {
+        setNewAttachment(e.target.value);
+    };
+
+
+ ////////////////////////////<-----------------HTML here----------------->////////////////////////////   
+
+    return (
+        <div className={`todo-container ${theme}`}>
+            {/* Theme Switcher Buttons */}
+            <div className="theme-switcher">{getThemeButtons()}</div>
+
+            <h1>To-Do List</h1>
+
+            {/* Input fields for new task */}
+            <div className="todo-input">
+                <input
+                    type="text"
+                    value={newTask}
+                    onChange={(e) => setNewTask(e.target.value)}
+                    placeholder="Add a new task..."
+                />
+                <input
+                    type="date"
+                    value={newDueDate}
+                    onChange={(e) => setNewDueDate(e.target.value)}
+                />
+                <input
+                    type="text"
+                    value={newAttachment}
+                    onChange={handleAttachmentChange}
+                    placeholder="Paste URL here"
+                />
+                <button onClick={addTask}>Add Task</button>
+            </div>
+
+            {/* Task List */}
+            <ul className="todo-list">
+                {tasks.map((task) => (
+                    <li key={task.id} className="todo-item">
+                        <input
+                            type="checkbox"
+                            checked={task.completed || false}
+                            onChange={() => toggleTaskCompletion(task.id)}
+                        />
+
+                        {task.isEditing ? (
+                            <>
+                                {/* Edit Task Inputs */}
+                                <input
+                                    type="text"
+                                    value={task.text}
+                                    onChange={(e) => editTask(task.id, e.target.value, task.dueDate)}
+                                    autoFocus
+                                />
+                                <input
+                                    type="date"
+                                    value={task.dueDate}
+                                    onChange={(e) => editTask(task.id, task.text, e.target.value)}
+                                />
+                            </>
+                        ) : (
+                            <>
+                                {/* Display Task */}
+                                <span>{task.text}</span>
+                                <span>{formatDate(task.dueDate)}</span>
+                            </>
+                        )}
+
+                        <button className="edit-btn" onClick={() => toggleEdit(task.id)}>
+                            {task.isEditing ? 'Save' : 'Edit'}
+                        </button>
+
+                        <button onClick={() => deleteTask(task.id)} className="delete-btn">
+                            Delete
+                        </button>
+
+                        {task.attachment && (
+                            <div className="task-attachment" style={{ marginTop: '5px', fontSize: '0.9em', marginLeft: '20px' }}>
+                                <a href={task.attachment} target="_blank" rel="noopener noreferrer">
+                                    Click for URL
+                                </a>
+                            </div>
+                        )}
+                    </li>
+                ))}
+            </ul>
+
+            {/* Progress Bar to show task completion percentage */}
+            <div className="progress-container">
+                <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+            </div>
+        </div>
+    );
+};
+
+export default MyWidget; // DONT TOUCH THIS AT ALL //
+
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+/* Container for the To-Do List */
+.todo-container {
+    padding: 20px;
+    max-width: 800px;
+    max-height: auto;
+    margin: 50px auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+    position: relative;
+}
+
+/* Theme Colors */
+.pinks {
+    background-color: #ebb8ed;
+    color: #333; /* Text color for pink theme */
+}
+
+.blues {
+    background-color: #b8daeb;
+    color: #333; /* Text color for blue theme */
+}
+
+.greens {
+    background-color: #b8ebb8;
+    color: #333; /* Text color for green theme */
+}
+
+/* Theme-Specific Button Styles */
+.pinks .todo-input button {
+    padding: 10px;
+    margin-left: 10px;
+    background-color: #ff99cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.pinks .todo-input button:hover {
+    background-color: #ff6699;
+}
+
+.blues .todo-input button {
+    padding: 10px;
+    margin-left: 10px;
+    background-color: #66b3ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.blues .todo-input button:hover {
+    background-color: #4d99e6;
+}
+
+.greens .todo-input button {
+    padding: 10px;
+    margin-left: 10px;
+    background-color: #66cc66;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.greens .todo-input button:hover {
+    background-color: #57b857;
+}
+
+/* Theme Switcher Buttons (Top Left & Right) */
+.theme-switcher {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: 10px;
+    left: 5px;
+    right: 5px;
+    z-index: 10;
+}
+
+.theme-switcher button {
+    padding: 5px 5px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background: none;
+}
+
+.theme-switcher button img {
+    width: 40px;
+    height: 40px;
+}
+
+.theme-switcher button:hover {
+    opacity: 0.8;
+}
+
+/* Header Styling */
+.todo-container h1 {
+    text-align: center;
+    color: inherit;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+/* Input Section */
+.todo-input {
+    display: flex;
+    margin-bottom: 20px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.todo-input input {
+    flex: 1;
+    padding: 10px;
+    border: 3px groove #140b0b0d;
+    border-radius: 4px;
+    margin: 10px;
+}
+
+.todo-input button {
+    padding: 10px;
+    background-color: #ff99cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Task List */
+.todo-list {
+    list-style-type: none;
+    padding-left: 15px;
+    padding-right: 10px;
+}
+
+.todo-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    flex-wrap: wrap; /* Ensures it doesn't overflow */
+}
+
+.todo-item input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.todo-item span {
+    flex-grow: 1;
+    word-wrap: break-word; /* word wrapping supposedly */
+    margin-right: 20px;
+}
+
+.todo-item input[type="date"] {
+    margin-left: 10px;
+}
+
+.todo-item button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #f55eac;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.todo-item button.delete-btn {
+    background-color: #e4426a;
+}
+
+.todo-item button:hover {
+    opacity: 0.9;
+}
+
+/* Theme-Specific Task Buttons */
+.pinks .todo-item button {
+    background-color: #ff99cc;
+}
+
+.blues .todo-item button {
+    background-color: #66b3ff;
+}
+
+.greens .todo-item button {
+    background-color: #66cc66;
+}
+
+/* Task Input Fields and Text */
+.todo-item input[type="text"] {
+    flex-grow: 1;
+    padding: 5px;
+    margin-right: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.todo-item input[type="date"] {
+    margin-left: 10px;
+}
+
+/* Smaller Buttons for Edit */
+.edit-btn, .delete-btn {
+    font-size: 12px;
+    padding: 5px 8px;
+}
+
+/* Progress Bar Styling */
+.progress-container {
+    width: 75%;
+    height: 10px;
+    background-color: #ddd;
+    border-radius: 5px;
+    transform: translateX(15%);
+    margin-top: 10px;
+    margin-bottom: 10px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background-color: #4caf50; /* Adjusts with theme */
+    transition: width 0.5s ease-in-out;
+}
+
+/* Theme-Specific Progress Bar */
+.pinks .progress-bar {
+    background-color: #ff80ab;
+}
+
+.blues .progress-bar {
+    background-color: #64b5f6;
+}
+
+.greens .progress-bar {
+    background-color: #81c784;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .todo-container {
+        padding: 15px;
+        max-width: 100%;
+    }
+
+    .todo-input {
+        flex-direction: column;
+    }
+
+    .todo-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .todo-item button {
+        margin-top: 10px;
+    }
+
+    .progress-container {
+        width: 100%;
+        height: 10px;
+        background-color: #e0e0e0;
+        border-radius: 5px;
+        margin-top: 20px;
+    }
+    
+    .progress-bar {
+        height: 100%;
+        text-align: center;
+        line-height: 20px;
+        color: white;
+        font-weight: bold;
+        transition: width 0.5s ease-in-out;
+    }
+}
+
